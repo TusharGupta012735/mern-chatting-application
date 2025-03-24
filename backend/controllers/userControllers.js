@@ -53,8 +53,16 @@ const authUser = asyncHandler(async (req, res) => {
     }
 });
 
+// /ai/user?search=piyush
+
 const allUsers = asyncHandler(async (req, res) => {
-    const users = await User.find({});
+    const keyword = req.query.search ? {
+        $or: [
+            { name: { $regex: req.query.search, $options: 'i' } },
+            { email: { $regex: req.query.search, $options: 'i' } },
+        ],
+    } : {};
+    const users = await User.find({...keyword});
     res.json(users);
 });
 
